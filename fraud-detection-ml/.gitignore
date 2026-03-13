@@ -1,0 +1,5 @@
+fraud-detection-ml/data/
+venv/
+__pycache__/
+*.pyc
+*.pkl
