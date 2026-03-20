@@ -5,3 +5,8 @@ __pycache__/
 *.pyc
 *.pkl
 temp.pdf
+.env
+.vscode/
+__pycache__/
+*.pyc
+temp.pdf

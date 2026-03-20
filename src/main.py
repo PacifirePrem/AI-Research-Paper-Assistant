@@ -1,9 +1,9 @@
-from src.ingestion.pdf_loader import load_pdf
-from src.preprocessing.chunk_text import chunk_text
-from src.embeddings.embedder import create_embeddings
-from src.vector_store.faiss_store import build_index
-from src.retrieval.retriever import retrieve
-from src.generation.rag_pipeline import generate_answer
+from ingestion.pdf_loader import load_pdf
+from preprocessing.chunk_text import chunk_text
+from embeddings.embedder import create_embeddings
+from vector_store.faiss_store import build_index
+from retrieval.retriever import retrieve
+from generation.rag_pipeline import generate_answer
 
 
 def build_pipeline(pdf_path):
