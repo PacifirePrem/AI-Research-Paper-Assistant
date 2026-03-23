@@ -6,7 +6,7 @@ import numpy as np
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
 
-def retrieve(query, index, chunks, k=3):
+def retrieve(query, index, chunks, k=5):
 
     # Convert query into embedding
     query_embedding = model.encode([query])

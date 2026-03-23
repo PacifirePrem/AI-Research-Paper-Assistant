@@ -1,7 +1,6 @@
 import sys
 import os
 
-# Tell Python: "src is root folder"
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 
 import streamlit as st
@@ -55,7 +54,7 @@ if "chunks" in st.session_state:
             )
 
         # Show assistant response
-        st.chat_message("assistant").write(answer)
+        st.chat_message("assistant").markdown(f"**Answer:**\n\n{answer}")
 
         # Save conversation
         st.session_state["chat_history"].append({"role": "user", "content": query})

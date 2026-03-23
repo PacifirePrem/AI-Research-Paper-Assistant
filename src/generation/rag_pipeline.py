@@ -1,15 +1,15 @@
-from transformers import pipeline
-
-# Load text generation model
-generator = pipeline("text-generation", model="gpt2")
+import ollama
 
 
 def generate_answer(query, context_chunks):
 
-    context = " ".join(context_chunks)
+    # Take top relevant chunks
+    context = "\n".join(context_chunks[:3])
 
     prompt = f"""
-Answer the question using the context below.
+You are an AI research assistant.
+
+Answer the question using ONLY the context below.
 
 Context:
 {context}
@@ -17,24 +17,14 @@ Context:
 Question:
 {query}
 
-Answer:
+Answer clearly and professionally:
 """
 
-    output = generator(prompt, max_length=200, num_return_sequences=1)
+    response = ollama.chat(
+        model="llama3",
+        messages=[
+            {"role": "user", "content": prompt}
+        ]
+    )
 
-    return output[0]["generated_text"]
-
-
-if __name__ == "__main__":
-
-    query = "What is attention in transformers?"
-
-    context_chunks = [
-        "Transformers use attention mechanisms to process sequences.",
-        "Self-attention helps models focus on relevant tokens."
-    ]
-
-    answer = generate_answer(query, context_chunks)
-
-    print("\nGenerated Answer:\n")
-    print(answer)
+    return response["message"]["content"].strip()
