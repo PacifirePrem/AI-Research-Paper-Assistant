@@ -1,25 +1,27 @@
-<img width="497" height="361" alt="image" src="https://github.com/user-attachments/assets/9e4f6e9c-7f44-4e65-81d8-beabe8c6471d" />AI Research Paper Assistant
+AI Research Paper Assistant
 
-RAG-Based Intelligent Document Question Answering System
+-> RAG-Based Intelligent Document Question Answering System
 
 Overview
 
-The AI Research Paper Assistant is an end-to-end application that allows users to upload research papers (PDF) and ask questions about their content.
-It leverages a Retrieval-Augmented Generation (RAG) pipeline to provide accurate, context-aware answers instead of generic responses.
+-> The AI Research Paper Assistant is an end-to-end application that allows users to upload research papers (PDF) and ask questions about their content.
+-> It leverages a Retrieval-Augmented Generation (RAG) pipeline to provide accurate, context-aware answers instead of generic responses.
 
 Live Demo
-https://ai-research-paper-assistant-xigb4j5vxb5dnlvgfejchj.streamlit.app/
+-> https://ai-research-paper-assistant-xigb4j5vxb5dnlvgfejchj.streamlit.app/
 
 Demo
+
 <img width="1914" height="928" alt="image" src="https://github.com/user-attachments/assets/7d68f49f-c787-4778-bfd9-b605963ae69a" />
 
 Key Features
-Upload and process research papers (PDF)
-Semantic search using embeddings
-Context-aware answer generation using LLM
-Fast retrieval using FAISS vector database
-Interactive chat-style interface
-Deployed using Streamlit Cloud
+
+-> Upload and process research papers (PDF)
+- >emantic search using embeddings
+-> Context-aware answer generation using LLM
+-> Fast retrieval using FAISS vector database
+-> Interactive chat-style interface
+-> Deployed using Streamlit Cloud
 
 Architecture
 
@@ -53,17 +55,17 @@ How it Works
 
 Performance Optimizations
 
-->Embedding caching to avoid recomputation
-->Chunk size tuning for better retrieval accuracy
-->Top-K retrieval for relevant context selection
+-> Embedding caching to avoid recomputation
+-> Chunk size tuning for better retrieval accuracy
+-> Top-K retrieval for relevant context selection
 
 Future Improvements
 
-Multi-document support
-Conversation memory (chat history awareness)
-Citations in answers
-Advanced LLM integration (LLaMA / OpenAI)
-API backend using FastAPI
+-> Multi-document support
+-> Conversation memory (chat history awareness)
+-> Citations in answers
+-> Advanced LLM integration (LLaMA / OpenAI)
+-> API backend using FastAPI
 
 Author
 Prem Kumar
