@@ -1,4 +1,4 @@
-AI Research Paper Assistant
+<img width="497" height="361" alt="image" src="https://github.com/user-attachments/assets/9e4f6e9c-7f44-4e65-81d8-beabe8c6471d" />AI Research Paper Assistant
 
 RAG-Based Intelligent Document Question Answering System
 
@@ -37,8 +37,33 @@ Tech Stack
 | PDF Processing       | PyPDF                                |
 | Deployment           | Streamlit Cloud                      |
 
-Tech stack
-- Python
-- FAISS
-- Sentence Transformers
-- Streamlit
+Project Structure
+
+<img width="497" height="361" alt="image" src="https://github.com/user-attachments/assets/e48c5602-4c91-42b2-94bd-e40cd945351e" />
+
+How it Works
+
+1. Upload a research paper
+2. Text is extracted and split into chunks
+3. Chunks are converted into vector embeddings
+4. Embeddings are stored in FAISS
+5. Relevant chunks are retrieved for a query
+6. LLM generates a context-aware answer
+7. Answer is displayed in the chat interface
+
+Performance Optimizations
+
+->Embedding caching to avoid recomputation
+->Chunk size tuning for better retrieval accuracy
+->Top-K retrieval for relevant context selection
+
+Future Improvements
+
+Multi-document support
+Conversation memory (chat history awareness)
+Citations in answers
+Advanced LLM integration (LLaMA / OpenAI)
+API backend using FastAPI
+
+Author
+Prem Kumar
