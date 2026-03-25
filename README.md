@@ -5,7 +5,7 @@ AI Research Paper Assistant
 Overview
 
 -> The AI Research Paper Assistant is an end-to-end application that allows users to upload research papers (PDF) and ask questions about their content.
--> It leverages a Retrieval-Augmented Generation (RAG) pipeline to provide accurate, context-aware answers instead of generic responses.
+-> \nIt leverages a Retrieval-Augmented Generation (RAG) pipeline to provide accurate, context-aware answers instead of generic responses.
 
 Live Demo
 -> https://ai-research-paper-assistant-xigb4j5vxb5dnlvgfejchj.streamlit.app/
@@ -17,7 +17,7 @@ Demo
 Key Features
 
 -> Upload and process research papers (PDF)
-- >emantic search using embeddings
+-> Semantic search using embeddings
 -> Context-aware answer generation using LLM
 -> Fast retrieval using FAISS vector database
 -> Interactive chat-style interface
