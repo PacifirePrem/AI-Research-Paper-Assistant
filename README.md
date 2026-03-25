@@ -22,7 +22,10 @@ Interactive chat-style interface
 Deployed using Streamlit Cloud
 
 Architecture
+
 <img width="507" height="323" alt="image" src="https://github.com/user-attachments/assets/fdb7ff4c-25e3-4104-9e78-219408f82045" />
+
+Tech Stack
 
 | Category             | Tools                                |
 | -------------------- | ------------------------------------ |
