@@ -1,7 +1,7 @@
-streamlit==1.32.0
-transformers==4.41.2
-torch==2.9.1
-sentence-transformers==2.6.1
-faiss-cpu==1.8.0
+streamlit
+transformers
+torch
+sentence-transformers
+faiss-cpu==1.13.2
 pypdf
 joblib
