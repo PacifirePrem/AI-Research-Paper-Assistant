@@ -1,4 +1,6 @@
-import os
+import hashlib
+from pathlib import Path
+
 import joblib
 
 from ingestion.pdf_loader import load_pdf
@@ -9,47 +11,76 @@ from retrieval.retriever import retrieve
 from generation.rag_pipeline import generate_answer
 
 
-# Save paths
-INDEX_PATH = "data/faiss_index.index"
-CHUNKS_PATH = "data/chunks.pkl"
+# A new cache version prevents reuse of indexes built with old chunk formats.
+CACHE_DIR = Path("data") / "indexes_v3"
+
+
+def get_document_hash(pdf_path):
+    digest = hashlib.sha256()
+
+    with open(pdf_path, "rb") as pdf_file:
+        for block in iter(lambda: pdf_file.read(1024 * 1024), b""):
+            digest.update(block)
+
+    return digest.hexdigest()
 
 
 def build_pipeline(pdf_path):
+    document_hash = get_document_hash(pdf_path)
 
-    # If already processed → load
-    if os.path.exists(INDEX_PATH) and os.path.exists(CHUNKS_PATH):
+    index_path = CACHE_DIR / f"{document_hash}.index"
+    chunks_path = CACHE_DIR / f"{document_hash}.chunks.pkl"
 
-        print("Loading saved index and chunks...")
+    if index_path.exists() and chunks_path.exists():
+        print(f"Loading cached document: {document_hash[:12]}...")
 
-        index = joblib.load(INDEX_PATH)
-        chunks = joblib.load(CHUNKS_PATH)
+        index = joblib.load(index_path)
+        chunks = joblib.load(chunks_path)
+
+        # Prevent accidental use of incompatible cache files.
+        if index.ntotal != len(chunks):
+            raise ValueError(
+                "Cached index and chunks do not match. "
+                "Use a fresh cache directory."
+            )
 
         return chunks, index
 
-    print("Processing new document...")
+    print(f"Processing document: {document_hash[:12]}...")
 
-    text = load_pdf(pdf_path)
+    pages = load_pdf(pdf_path)
+    chunks = chunk_text(pages)
 
-    chunks = chunk_text(text)
+    if not chunks:
+        raise ValueError("No text chunks could be created from this PDF.")
 
-    embeddings = create_embeddings(chunks)
-
+    # Embed text only; keep page metadata in the chunk records.
+    chunk_texts = [chunk["text"] for chunk in chunks]
+    embeddings = create_embeddings(chunk_texts)
     index = build_index(embeddings)
 
-    # Save
-    os.makedirs("data", exist_ok=True)
-    joblib.dump(index, INDEX_PATH)
-    joblib.dump(chunks, CHUNKS_PATH)
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-    print("Saved index and chunks!")
+    joblib.dump(index, index_path)
+    joblib.dump(chunks, chunks_path)
 
+    print(f"Saved document cache: {document_hash[:12]}...")
     return chunks, index
 
 
 def answer_query(query, chunks, index):
-
     retrieved_chunks = retrieve(query, index, chunks)
+
+    if not retrieved_chunks:
+        return (
+            "I couldn't find relevant passages in the extracted paper text.",
+            [],
+        )
 
     answer = generate_answer(query, retrieved_chunks)
 
-    return answer
+    source_pages = list(dict.fromkeys(
+        chunk["page"] for chunk in retrieved_chunks
+    ))
+
+    return answer, retrieved_chunks
