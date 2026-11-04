@@ -1,49 +1,32 @@
-from sentence_transformers import SentenceTransformer
-import numpy as np
-
-
-# Load embedding model
-model = SentenceTransformer("all-MiniLM-L6-v2")
+from embeddings.embedder import create_query_embedding
 
 
 def retrieve(query, index, chunks, k=5):
+    """Retrieve the most similar chunks for a question."""
+    if not query or not query.strip():
+        return []
 
-    # Convert query into embedding
-    query_embedding = model.encode([query])
+    if not chunks or index.ntotal == 0:
+        return []
 
-    # Search FAISS index
-    distances, indices = index.search(np.array(query_embedding), k)
+    if index.ntotal != len(chunks):
+        raise ValueError(
+            "The FAISS index and chunk list have different sizes. "
+            "Reprocess the document to rebuild the index."
+        )
 
-    # Return top chunks
-    results = [chunks[i] for i in indices[0]]
+    query_embedding = create_query_embedding(query)
+
+    k = min(k, index.ntotal)
+
+    scores, indices = index.search(query_embedding, k)
+
+    results = []
+
+    for score, idx in zip(scores[0], indices[0]):
+        if 0 <= idx < len(chunks):
+            results.append(chunks[idx])
+
+            print(f"Retrieval similarity: {score:.4f}")
 
     return results
-
-
-if __name__ == "__main__":
-
-    # Example chunks
-    chunks = [
-        "Transformers use attention mechanisms.",
-        "BERT is a language representation model.",
-        "Neural networks learn hierarchical features.",
-        "Self-attention helps models focus on important tokens."
-    ]
-
-    # Fake embeddings for testing
-    embeddings = model.encode(chunks)
-
-    import faiss
-
-    dimension = embeddings.shape[1]
-    index = faiss.IndexFlatL2(dimension)
-    index.add(np.array(embeddings))
-
-    query = "What is attention in transformers?"
-
-    results = retrieve(query, index, chunks)
-
-    print("\nTop relevant chunks:\n")
-
-    for r in results:
-        print("-", r)
