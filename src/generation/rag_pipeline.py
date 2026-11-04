@@ -1,3 +1,4 @@
+
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
@@ -9,6 +10,7 @@ model = AutoModelForCausalLM.from_pretrained(
     MODEL_NAME,
     torch_dtype=torch.float32,
 )
+
 model.eval()
 
 
@@ -29,11 +31,18 @@ def generate_answer(query, context_chunks):
         {
             "role": "system",
             "content": (
-                "You answer questions about research papers. "
-                "Use only the supplied excerpts. "
-                "Do not invent facts, figures, results, or dataset details. "
-                "If the excerpts do not support an answer, say so. "
-                "Cite supporting pages using the format [Page N]."
+                "You are an assistant that answers questions about "
+                "research papers.\n"
+                "Use only the supplied research paper excerpts.\n"
+                "Do not invent facts, figures, results, or dataset details.\n"
+                "If the excerpts do not support an answer, say so.\n"
+                "Start every answer with a complete, grammatically correct "
+                "sentence.\n"
+                "Never start with a partial word, incomplete sentence, "
+                "ellipsis, or continuation fragment.\n"
+                "Paraphrase incomplete source passages into complete "
+                "sentences.\n"
+                "Cite supporting pages using [Page N]."
             ),
         },
         {
@@ -41,7 +50,9 @@ def generate_answer(query, context_chunks):
             "content": (
                 f"Research paper excerpts:\n{context}\n\n"
                 f"Question: {query}\n\n"
-                "Answer clearly and cite the pages supporting your answer."
+                "Write a clear, self-contained answer. "
+                "Begin with the main point in a complete sentence. "
+                "Include page citations where supported."
             ),
         },
     ]
@@ -54,21 +65,29 @@ def generate_answer(query, context_chunks):
         return_dict=True,
     )
 
-    with torch.no_grad():
+    # Store the prompt length BEFORE generating new tokens.
+    prompt_length = inputs["input_ids"].shape[-1]
+
+    with torch.inference_mode():
         output = model.generate(
             **inputs,
-            max_new_tokens=180,
+            max_new_tokens=220,
             do_sample=False,
             repetition_penalty=1.1,
             pad_token_id=tokenizer.eos_token_id,
+            eos_token_id=tokenizer.eos_token_id,
         )
 
-    input_length = inputs["input_ids"].shape[1]
-    answer_tokens = output[0][input_length:]
+    # Extract only newly generated answer tokens.
+    answer_tokens = output[0, prompt_length:]
 
     answer = tokenizer.decode(
         answer_tokens,
         skip_special_tokens=True,
+        clean_up_tokenization_spaces=True,
     ).strip()
 
-    return answer or "I couldn't generate an answer from the retrieved excerpts."
+    if not answer:
+        return "I couldn't generate an answer from the retrieved excerpts."
+
+    return answer
